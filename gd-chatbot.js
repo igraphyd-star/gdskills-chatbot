@@ -19,12 +19,12 @@ try {
 /* ---------- 1. Styles (injected at runtime so LiteSpeed can't strip them) ---------- */
 var CSS = [
 '.gdca-hidden{display:none!important}',
-'#gdca-btn{position:fixed;right:18px;bottom:18px;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;z-index:999998;background:linear-gradient(135deg,#ff9a2e,#f97316);box-shadow:0 8px 24px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;transition:transform .18s ease,box-shadow .18s ease;font-family:inherit}',
+'#gdca-btn{position:fixed;right:18px;bottom:96px;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;z-index:999998;background:linear-gradient(135deg,#ff9a2e,#f97316);box-shadow:0 8px 24px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;transition:transform .18s ease,box-shadow .18s ease;font-family:inherit}',
 '#gdca-btn:hover{transform:scale(1.07);box-shadow:0 10px 28px rgba(249,115,22,.6)}',
 '#gdca-btn svg{width:30px;height:30px;fill:#fff}',
 '#gdca-btn .gdca-dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:2.5px solid #fff}',
-'#gdca-teaser{position:fixed;right:88px;bottom:34px;z-index:999998;background:#fff;color:#1f2937;font:500 13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:10px 14px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 20px rgba(0,0,0,.16);cursor:pointer;max-width:230px;border:1px solid #f1f5f9}',
-'#gdca-panel{position:fixed;right:18px;bottom:90px;width:382px;max-width:calc(100vw - 28px);height:580px;max-height:calc(100vh - 120px);z-index:999999;background:#f8fafc;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;border:1px solid #e2e8f0}',
+'#gdca-teaser{position:fixed;right:88px;bottom:112px;z-index:999998;background:#fff;color:#1f2937;font:500 13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:10px 14px;border-radius:14px 14px 4px 14px;box-shadow:0 6px 20px rgba(0,0,0,.16);cursor:pointer;max-width:230px;border:1px solid #f1f5f9}',
+'#gdca-panel{position:fixed;right:18px;bottom:168px;width:382px;max-width:calc(100vw - 28px);height:580px;max-height:calc(100vh - 120px);z-index:999999;background:#f8fafc;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;border:1px solid #e2e8f0}',
 '.gdca-head{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:13px 14px;display:flex;align-items:center;gap:10px;flex:none}',
 '.gdca-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ff9a2e,#f97316);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#fff;flex:none}',
 '.gdca-title{flex:1;min-width:0}',
@@ -59,7 +59,7 @@ var CSS = [
 '#gdca-input:focus{border-color:#f97316}',
 '#gdca-send{width:42px;height:42px;flex:none;border:none;border-radius:50%;background:linear-gradient(135deg,#ff9a2e,#f97316);cursor:pointer;display:flex;align-items:center;justify-content:center}',
 '#gdca-send svg{width:19px;height:19px;fill:#fff}',
-'@media (max-width:480px){#gdca-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:78vh;max-height:78vh;border-radius:18px 18px 0 0}#gdca-btn{right:14px;bottom:14px}#gdca-teaser{right:84px;bottom:28px}}'
+'@media (max-width:480px){#gdca-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:78vh;max-height:78vh;border-radius:18px 18px 0 0}#gdca-btn{right:14px;bottom:92px}#gdca-teaser{right:84px;bottom:106px}}'
 ].join('\n');
 
 function injectCSS() {
