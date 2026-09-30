@@ -402,25 +402,27 @@ function buySteps(c) {
     var s = '<b>Course lene ka tareeqa:</b><br><ul>' +
       '<li>Course page par <b>"Add to cart"</b> dabayein</li>' +
       '<li>Cart mein <b>"Proceed to checkout"</b> par click karein</li>' +
-      '<li>Apni details bharein aur <b>bank transfer</b> se payment karein (Order ID reference mein zaroor likhein)</li>' +
-      '<li>EasyPaisa / JazzCash / card se dena ho to WhatsApp <b>0308-4962018</b> par rabta karein</li>' +
-      '<li>Payment ke <b>1 ghante</b> (ziyada se ziyada 24 ghante) mein course access mil jayega</li></ul>';
+      '<li>Apni details bharein aur fee neeche diye gaye account mein transfer karein (Order ID reference mein zaroor likhein)</li>' +
+      '<li>اس اکاؤنٹ میں فیس ادا کر کے اسکرین شاٹ <b>03170045389</b> par bhejein</li>' +
+      '<li>Payment ke <b>1 ghante</b> (ziyada se ziyada 24 ghante) mein course access mil jayega</li></ul>' +
+      '<b>Bank details:</b><br>Bank Islami<br>Account title: Laila Khan<br>Account number: 214700118350366<br>IBAN: PK29BKIP0214700118350366<br><b>JazzCash:</b> 03170045389 (Laila Khan)';
     return s;
   }
   return '<b>How to enroll:</b><br><ul>' +
     '<li>Click <b>"Add to cart"</b> on the course page</li>' +
     '<li>Click <b>"Proceed to checkout"</b> in the cart</li>' +
-    '<li>Fill your details and pay via <b>bank transfer</b> (mention your Order ID as reference)</li>' +
-    '<li>For EasyPaisa / JazzCash / card, contact us on WhatsApp <b>0308-4962018</b></li>' +
-    '<li>You get course access within <b>1 hour</b> (max 24 hours) of payment</li></ul>';
+    '<li>Fill your details and transfer the fee to the account below (mention your Order ID as reference)</li>' +
+    '<li>Send the payment screenshot to <b>03170045389</b></li>' +
+    '<li>You get course access within <b>1 hour</b> (max 24 hours) of payment</li></ul>' +
+    '<b>Bank details:</b><br>Bank Islami<br>Account title: Laila Khan<br>Account number: 214700118350366<br>IBAN: PK29BKIP0214700118350366<br><b>JazzCash:</b> 03170045389 (Laila Khan)';
 }
 
 function faqAnswer(intent) {
   var wa = waLink(lang === 'ur' ? 'Assalam-o-Alaikum! Mujhe GDSkills courses ke baray mein maloomat chahiye.' : 'Hello! I need information about GDSkills courses.');
   var A = {
     payment: {
-      ur: '<b>Payment methods:</b><br><ul><li>Website checkout par <b>Direct Bank Transfer</b></li><li><b>EasyPaisa / JazzCash / Debit-Credit Card</b> — WhatsApp 0308-4962018 par rabta karke</li><li><b>International students:</b> PayPal / Skrill ke zariye</li></ul>',
-      en: '<b>Payment methods:</b><br><ul><li><b>Direct Bank Transfer</b> on website checkout</li><li><b>EasyPaisa / JazzCash / Debit-Credit Card</b> — contact us on WhatsApp 0308-4962018</li><li><b>International students:</b> via PayPal / Skrill</li></ul>'
+      ur: '<b>Payment methods:</b><br><ul><li><b>Bank transfer:</b> Bank Islami — Laila Khan, 214700118350366 (IBAN: PK29BKIP0214700118350366)</li><li><b>JazzCash:</b> 03170045389 (Laila Khan)</li><li>Fee transfer karke screenshot <b>03170045389</b> par bhejein</li><li><b>International students:</b> PayPal / Skrill ke zariye</li></ul>',
+      en: '<b>Payment methods:</b><br><ul><li><b>Bank transfer:</b> Bank Islami — Laila Khan, 214700118350366 (IBAN: PK29BKIP0214700118350366)</li><li><b>JazzCash:</b> 03170045389 (Laila Khan)</li><li>Send the payment screenshot to <b>03170045389</b></li><li><b>International students:</b> via PayPal / Skrill</li></ul>'
     },
     refund: {
       ur: '<b>Refund policy:</b> Agar aap ne course ka koi hissa <b>access nahi kiya</b> aur registration ke <b>3 working days</b> ke andar email se refund mangein to refund mil sakta hai. Course shuru karne ke baad refund nahi hota.',
