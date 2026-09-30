@@ -33,11 +33,11 @@ try {
 /* ---------- 1. Styles ---------- */
 var CSS = [
 '.gds-hidden{display:none!important}',
-'#gds-btn{position:fixed;right:18px;bottom:18px;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;z-index:999998;background:linear-gradient(135deg,#14b8a6,#0d9488);box-shadow:0 8px 24px rgba(13,148,136,.45);display:flex;align-items:center;justify-content:center;transition:transform .18s ease;font-family:inherit}',
+'#gds-btn{position:fixed;right:18px;bottom:96px;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;z-index:999998;background:linear-gradient(135deg,#14b8a6,#0d9488);box-shadow:0 8px 24px rgba(13,148,136,.45);display:flex;align-items:center;justify-content:center;transition:transform .18s ease;font-family:inherit}',
 '#gds-btn:hover{transform:scale(1.07)}',
 '#gds-btn svg{width:30px;height:30px;fill:#fff}',
 '#gds-btn .gds-dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;background:#22c55e;border:2.5px solid #fff}',
-'#gds-panel{position:fixed;right:18px;bottom:90px;width:382px;max-width:calc(100vw - 28px);height:580px;max-height:calc(100vh - 120px);z-index:999999;background:#f8fafc;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;border:1px solid #e2e8f0}',
+'#gds-panel{position:fixed;right:18px;bottom:168px;width:382px;max-width:calc(100vw - 28px);height:580px;max-height:calc(100vh - 120px);z-index:999999;background:#f8fafc;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;border:1px solid #e2e8f0}',
 '.gds-head{background:linear-gradient(135deg,#0f3b36,#0d9488);color:#fff;padding:13px 14px;display:flex;align-items:center;gap:10px;flex:none}',
 '.gds-avatar{width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#0d9488;flex:none}',
 '.gds-title{flex:1;min-width:0}',
@@ -70,7 +70,7 @@ var CSS = [
 '#gds-input:focus{border-color:#0d9488}',
 '#gds-send{width:42px;height:42px;flex:none;border:none;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);cursor:pointer;display:flex;align-items:center;justify-content:center}',
 '#gds-send svg{width:19px;height:19px;fill:#fff}',
-'@media (max-width:480px){#gds-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:78vh;max-height:78vh;border-radius:18px 18px 0 0}#gds-btn{right:14px;bottom:14px}}'
+'@media (max-width:480px){#gds-panel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:78vh;max-height:78vh;border-radius:18px 18px 0 0}#gds-btn{right:14px;bottom:92px}}'
 ].join('\n');
 
 function injectCSS() {
