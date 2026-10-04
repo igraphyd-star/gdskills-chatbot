@@ -1,0 +1,42 @@
+/* WPCode snippet: PHP type, Location: Site Wide Footer
+   Paste the code below WITHOUT any <?php opening tag.
+   Shows the Study Helper ONLY to logged-in users who paid for a
+   course (completed/processing WooCommerce order) OR are enrolled
+   in a LearnDash course other than the free Tajweed course. */
+
+add_action('wp_footer', function() {
+    if (!is_user_logged_in()) return;
+    if (function_exists('is_cart') && (is_cart() || is_checkout() || is_account_page())) return;
+
+    $uid  = get_current_user_id();
+    $paid = false;
+    $my   = array();
+
+    // 1) Paid WooCommerce order?
+    if (function_exists('wc_get_orders')) {
+        $orders = wc_get_orders(array(
+            'customer_id' => $uid,
+            'status'      => array('completed', 'processing'),
+            'limit'       => 1,
+            'return'      => 'ids',
+        ));
+        if (!empty($orders)) $paid = true;
+    }
+
+    // 2) LearnDash enrollment (excluding the free Tajweed course)?
+    if (function_exists('learndash_user_get_enrolled_courses')) {
+        $tajweed_id = 0;
+        $p = get_page_by_path('tajweed-al-quran', OBJECT, 'sfwd-courses');
+        if ($p) $tajweed_id = $p->ID;
+        foreach ((array) learndash_user_get_enrolled_courses($uid) as $cid) {
+            if ($cid == $tajweed_id) continue;
+            $paid = true;
+            $my[] = get_the_title($cid);
+        }
+    }
+
+    if (!$paid) return;
+
+    echo '<script>window.__gdcaMyCourses = ' . wp_json_encode(array_values(array_unique($my))) . ';</script>' . "\n";
+    echo '<script src="https://cdn.jsdelivr.net/gh/igraphyd-star/gdskills-chatbot@main/gd-study-helper.js" defer></script>' . "\n";
+}, 20);
