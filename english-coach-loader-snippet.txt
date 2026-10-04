@@ -1,0 +1,31 @@
+/* WPCode snippet: PHP type, Location: Site Wide Footer
+   Paste the code below WITHOUT any <?php opening tag.
+   Loads the English Coach widget ONLY for logged-in users
+   enrolled in the English Speaking Course (slug
+   english-speaking-course, fallback ID 25952).
+   Excludes cart / checkout / my-account / admin / login pages. */
+
+add_action('wp_footer', function() {
+    if (!is_user_logged_in()) return;
+    if (function_exists('is_cart') && (is_cart() || is_checkout() || is_account_page())) return;
+
+    $uid = get_current_user_id();
+    $cid = 25952;
+    $p = get_page_by_path('english-speaking-course', OBJECT, 'sfwd-courses');
+    if ($p) $cid = (int) $p->ID;
+
+    $enrolled = false;
+    if (function_exists('sfwd_lms_has_access')) {
+        $enrolled = (bool) sfwd_lms_has_access($cid, $uid);
+    } elseif (function_exists('learndash_user_get_enrolled_courses')) {
+        $enrolled = in_array($cid, (array) learndash_user_get_enrolled_courses($uid), false);
+    }
+    if (!$enrolled) return;
+
+    echo '<script>window.__gdEnglishCoach = ' . wp_json_encode(array(
+        'enrolled' => true,
+        'ajaxurl'  => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('gd_english_coach_nonce'),
+    )) . ';</script>' . "\n";
+    echo '<script src="https://cdn.jsdelivr.net/gh/igraphyd-star/gdskills-chatbot@main/gd-english-coach.js" defer></script>' . "\n";
+}, 20);
