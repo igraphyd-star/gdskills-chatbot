@@ -1,0 +1,133 @@
+/* WPCode snippet: PHP type, Location: Run Everywhere
+   Paste the code below WITHOUT any <?php opening tag.
+   AJAX proxy: gd_english_coach -> OpenRouter (AI English tutor).
+
+   SECURITY:
+   - Logged-in users only (no nopriv).
+   - Nonce check.
+   - Server-side LearnDash enrollment check for the English
+     Speaking Course (slug english-speaking-course, fallback ID 25952).
+   - System prompts are fixed server-side; the browser can only
+     pick a mode from an allowlist and send user text.
+   - Per-user rate limit: 40 requests/hour (transient).
+   - API key NEVER leaves the server. Set it in wp-config.php:
+         define('GD_ENGLISH_COACH_OR_KEY', 'sk-or-...');
+     (or the 'gd_english_coach_or_key' WP option as fallback). */
+
+add_action('wp_ajax_gd_english_coach', 'gd_english_coach_handler');
+
+function gd_english_coach_course_id() {
+    $p = get_page_by_path('english-speaking-course', OBJECT, 'sfwd-courses');
+    if ($p) return (int) $p->ID;
+    return 25952;
+}
+
+function gd_english_coach_enrolled($uid) {
+    if (!$uid) return false;
+    $cid = gd_english_coach_course_id();
+    if (function_exists('sfwd_lms_has_access')) {
+        return (bool) sfwd_lms_has_access($cid, $uid);
+    }
+    if (function_exists('learndash_user_get_enrolled_courses')) {
+        return in_array($cid, (array) learndash_user_get_enrolled_courses($uid), false);
+    }
+    return false;
+}
+
+function gd_english_coach_system_prompt($mode) {
+    switch ($mode) {
+        case 'sentence':
+            return "You are an English grammar checker for Pakistani beginner students. The student gives ONE English sentence. Reply in this exact format, short:\n1) Sahih jumla: <corrected sentence>\n2) Ghalti: <what was wrong, explained in Roman Urdu, 1-2 lines>\n3) Qaida: <grammar rule name and which tense/lesson of a spoken English course it relates to, in Roman Urdu>\nKeep the whole reply under 120 words.";
+        case 'pronounce':
+            return "A Pakistani beginner student is practicing English pronunciation. You get a TARGET phrase and what the student SAID (from speech-to-text, may have errors). Reply short in Roman Urdu + English:\n1) Sahih bola ya nahi (haan / taqreeban / nahi)\n2) Kaun sa lafz ghalat lag raha hai aur usay kaisay bolein (simple Roman Urdu)\n3) Lafz ko syllables me tor kar likho.\nUnder 120 words.";
+        case 'quiz':
+            return "Generate 5 beginner-level English MCQs on the given topic for Pakistani spoken-English students. Reply with ONLY valid JSON, no markdown, no extra text: {\"questions\":[{\"q\":\"question\",\"options\":[\"a\",\"b\",\"c\",\"d\"],\"answer\":0,\"explain\":\"1-line Roman Urdu explanation\"}]}. \"answer\" is the 0-based index of the correct option.";
+        case 'chat':
+        default:
+            return "You are 'English Coach', a friendly Pakistani English-speaking tutor for BEGINNER students of an online Spoken English course. Rules:\n1) Converse in SIMPLE English (beginner level, short sentences).\n2) Keep replies short (2-4 sentences) and end with ONE follow-up question to keep the conversation going.\n3) If the student makes an English mistake, first correct it briefly in Roman Urdu (1 line), then continue in English.\n4) You may roleplay everyday situations (family, shopping, job interview, travel) when asked.\n5) Only discuss English learning; politely redirect anything else.\n6) Never produce disallowed content.";
+    }
+}
+
+function gd_english_coach_handler() {
+    $uid = get_current_user_id();
+    if (!$uid || !check_ajax_referer('gd_english_coach_nonce', 'nonce', false)) {
+        wp_send_json_error(array('message' => 'Ijazat nahi hai. Dobara login karein.'));
+    }
+    if (!gd_english_coach_enrolled($uid)) {
+        wp_send_json_error(array('message' => 'Ye helper sirf English Speaking Course ke students ke liye hai.'));
+    }
+
+    // Rate limit: 40/hour per user
+    $rl_key = 'gdec_rl_' . $uid;
+    $hits = (int) get_transient($rl_key);
+    if ($hits >= 40) {
+        wp_send_json_error(array('message' => 'Aaj ka limit mukammal. Thori der baad try karein.'));
+    }
+    set_transient($rl_key, $hits + 1, HOUR_IN_SECONDS);
+
+    $mode = isset($_POST['mode']) ? sanitize_key($_POST['mode']) : 'chat';
+    $allowed = array('chat', 'sentence', 'pronounce', 'quiz');
+    if (!in_array($mode, $allowed, true)) $mode = 'chat';
+
+    $messages = array(
+        array('role' => 'system', 'content' => gd_english_coach_system_prompt($mode)),
+    );
+
+    if ($mode === 'chat') {
+        $hist = isset($_POST['history']) ? wp_unslash($_POST['history']) : '[]';
+        $hist = json_decode($hist, true);
+        if (is_array($hist)) {
+            $hist = array_slice($hist, -8);
+            foreach ($hist as $m) {
+                $role = (isset($m['role']) && $m['role'] === 'assistant') ? 'assistant' : 'user';
+                $content = isset($m['content']) ? mb_substr(sanitize_text_field($m['content']), 0, 1000) : '';
+                if ($content !== '') $messages[] = array('role' => $role, 'content' => $content);
+            }
+        }
+        $temperature = 0.7; $max_tokens = 350;
+    } elseif ($mode === 'quiz') {
+        $topic = isset($_POST['topic']) ? mb_substr(sanitize_text_field(wp_unslash($_POST['topic'])), 0, 60) : 'Tenses';
+        $messages[] = array('role' => 'user', 'content' => 'Topic: ' . $topic);
+        $temperature = 0.5; $max_tokens = 900;
+    } elseif ($mode === 'pronounce') {
+        $target = isset($_POST['target']) ? mb_substr(sanitize_text_field(wp_unslash($_POST['target'])), 0, 200) : '';
+        $said   = isset($_POST['said']) ? mb_substr(sanitize_text_field(wp_unslash($_POST['said'])), 0, 200) : '';
+        $messages[] = array('role' => 'user', 'content' => 'TARGET: ' . $target . "\nSTUDENT SAID: " . $said);
+        $temperature = 0.3; $max_tokens = 350;
+    } else { // sentence
+        $text = isset($_POST['text']) ? mb_substr(sanitize_text_field(wp_unslash($_POST['text'])), 0, 500) : '';
+        $messages[] = array('role' => 'user', 'content' => $text);
+        $temperature = 0.3; $max_tokens = 400;
+    }
+
+    $api_key = defined('GD_ENGLISH_COACH_OR_KEY') ? GD_ENGLISH_COACH_OR_KEY : get_option('gd_english_coach_or_key', '');
+    if (!$api_key) {
+        wp_send_json_error(array('message' => 'AI service abhi setup nahi hui. Admin se rabta karein.'));
+    }
+
+    $resp = wp_remote_post('https://openrouter.ai/api/v1/chat/completions', array(
+        'timeout' => 45,
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $api_key,
+            'Content-Type'  => 'application/json',
+            'HTTP-Referer'  => home_url('/'),
+            'X-Title'       => 'GDSkills English Coach',
+        ),
+        'body' => wp_json_encode(array(
+            'model'       => 'openai/gpt-4o-mini',
+            'messages'    => $messages,
+            'temperature' => $temperature,
+            'max_tokens'  => $max_tokens,
+        )),
+    ));
+
+    if (is_wp_error($resp)) {
+        wp_send_json_error(array('message' => 'AI se rabta nahi ho saka. Dobara try karein.'));
+    }
+    $data = json_decode(wp_remote_retrieve_body($resp), true);
+    $reply = isset($data['choices'][0]['message']['content']) ? trim($data['choices'][0]['message']['content']) : '';
+    if ($reply === '') {
+        wp_send_json_error(array('message' => 'AI se jawab nahi mila. Dobara try karein.'));
+    }
+    wp_send_json_success(array('reply' => $reply));
+}
